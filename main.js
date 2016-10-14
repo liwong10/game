@@ -7,14 +7,22 @@ var mainState = {
         // That's where we load the game's assets
         // Load the image
         game.load.image("napoleon","napoleon.jpg");
+        game.load.image("chapstick","chapstick.jpg");
     }
     , create: function () {
         // This function is called after the 'preload' function 
         // Here we set up the game, display sprites, etc.
         this.player = game.add.sprite(0,100,"napoleon");
         this.player.scale.setTo(.35,.35);
+        
+        this.coins=game.add.group();
+        this.coins.enableBody=true;
+        this.coins.createMultiple(50,"chapstick");
+        game.time.events.loop(100,this.addCoins,this);
+        
+        
         this.physics.arcade.enable(this.player);
-        this.player.body.gravity.y=300;
+        this.player.body.gravity.y=5000;
         this.player.body.collideWorldBounds = true;
         this.keyboard=game.input.keyboard.createCursorKeys();
         
@@ -29,10 +37,27 @@ var mainState = {
         if (this.keyboard.up.isDown) {
             this.player.body.velocity.y=-300;
         }else if(this.keyboard.down.isDown){
-            this.player.body.velocity.y=300;
+            this.player.body.velocity.y=800;
         }
         
         // This contains Game Logic 
+    }
+    ,addCoins: function(){
+        var coin=this.coins.getFirstDead();
+        if(!coin){
+            return;
+        }
+        coin.scale.setTo(.5,.5);
+        coin.anchor.setTo(0.5,1);
+        coin.reset(game.rnd.pick([game.width/2,0]),0);
+        coin.body.gravity.y=500;
+        coin.body.velocity.x=100*
+        game.rnd.pick([-2,2]);
+        coin.body.bounce.x=1;
+        coin.checkWorldBounds=true;
+        coin.outOfBoundsKill=true;
+        
+        
     }
 };
 // We initialize Phaser
